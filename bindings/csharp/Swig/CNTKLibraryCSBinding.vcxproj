@@ -120,6 +120,8 @@
   <ItemGroup>
     <None Include="..\..\common\CNTKValueExtend.i" />
     <None Include="..\..\common\CNTK_ExceptionHandling.i" />
+    <None Include="std_unordered_map.i" />
+    <None Include="std_vector.i" />
   </ItemGroup>
   <Target Name="CheckDependencies">
     <Warning Condition="!$(HasSwig)" Text="The project requires SWIG to be installed. Please see https://github.com/Microsoft/CNTK/wiki/Setup-CNTK-on-Windows#optional-cntk-cnet-library-for-evaluation for installation instructions." />

@@ -1009,7 +1009,7 @@
         {
             var inputSeqVector = new FloatVectorVector();
             var floatVectorRefList = new System.Collections.Generic.List<FloatVector>();
-            foreach (var seq in sequences)
+            foreach (System.Collections.Generic.IEnumerable<float> seq in sequences)
             {
                 var seqFloatVector = new FloatVector(seq);
                 floatVectorRefList.Add(seqFloatVector);
@@ -1021,7 +1021,7 @@
         {
             var inputSeqVector = new DoubleVectorVector();
             var doubleVectorRefList = new System.Collections.Generic.List<DoubleVector>();
-            foreach (var seq in sequences)
+            foreach (System.Collections.Generic.IEnumerable<double> seq in sequences)
             {
                 var seqDoubleVector = new DoubleVector(seq);
                 doubleVectorRefList.Add(seqDoubleVector);

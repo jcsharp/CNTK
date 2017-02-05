@@ -36,5 +36,7 @@
   <ItemGroup>
     <None Include="..\..\common\CNTKValueExtend.i" />
     <None Include="..\..\common\CNTK_ExceptionHandling.i" />
+    <None Include="std_vector.i" />
+    <None Include="std_unordered_map.i" />
   </ItemGroup>
 </Project>
