@@ -107,7 +107,7 @@ namespace Microsoft.MSR.CNTK.Extensibility.Managed.CSEvalClient
             Console.WriteLine("\n====== Evaluation Complete ========");
         }
 
-        private static void CompareImageApiResults(List<float> outputs1,List<float> outputs2)
+        private static void CompareImageApiResults(IList<float> outputs1, IList<float> outputs2)
         {
             if (outputs1.Count != outputs2.Count)
             {
@@ -177,7 +177,7 @@ namespace Microsoft.MSR.CNTK.Extensibility.Managed.CSEvalClient
                 // The examples assume the executable is running from the data folder
                 // We switch the current directory to the data folder (assuming the executable is in the <CNTK>/x64/Debug|Release folder
                 Environment.CurrentDirectory = Path.Combine(initialDirectory, @"..\..\Examples\Image\GettingStarted");
-                List<float> outputs;
+                IList<float> outputs;
 
                 using (var model = new IEvaluateModelManagedF())
                 {
@@ -225,7 +225,7 @@ namespace Microsoft.MSR.CNTK.Extensibility.Managed.CSEvalClient
                 // We switch the current directory to the data folder (assuming the executable is in the <CNTK>/x64/Debug|Release folder
                 Environment.CurrentDirectory = Path.Combine(initialDirectory, @"..\..\Examples\Image\GettingStarted");
 
-                Dictionary<string, List<float>> outputs;
+                Dictionary<string, IList<float>> outputs;
 
                 using (var model = new IEvaluateModelManagedF())
                 {
@@ -249,7 +249,7 @@ namespace Microsoft.MSR.CNTK.Extensibility.Managed.CSEvalClient
                     var outDims = model.GetNodeDimensions(NodeGroup.Output);
 
                     // We can preallocate the output structure and pass it in (multiple output layers)
-                    outputs = new Dictionary<string, List<float>>()
+                    outputs = new Dictionary<string, IList<float>>()
                     {
                         { hiddenLayerName, GetFloatArray(outDims[hiddenLayerName], 1) },    
                         { outputLayerName, GetFloatArray(outDims[outputLayerName], 1) }
@@ -416,9 +416,9 @@ namespace Microsoft.MSR.CNTK.Extensibility.Managed.CSEvalClient
         /// This method shows how to evaluate a trained image classification model, with
         /// explicitly created feature vectors.
         /// </summary>
-        public static List<float> EvaluateImageInputUsingFeatureVector()
+        public static IList<float> EvaluateImageInputUsingFeatureVector()
         {
-            List<float> outputs = null;
+            IList<float> outputs = null;
 
             try
             {
@@ -444,7 +444,7 @@ namespace Microsoft.MSR.CNTK.Extensibility.Managed.CSEvalClient
                     var resized = bmp.Resize(resNetImageSize, resNetImageSize, true);
 
                     var resizedCHW = resized.ParallelExtractCHW();
-                    var inputs = new Dictionary<string, List<float>>() { {inDims.First().Key, resizedCHW } };
+                    var inputs = new Dictionary<string, IList<float>>() { {inDims.First().Key, resizedCHW } };
 
                     // We can call the evaluate method and get back the results (single layer output)...
                     var outDims = model.GetNodeDimensions(NodeGroup.Output);
@@ -473,9 +473,9 @@ namespace Microsoft.MSR.CNTK.Extensibility.Managed.CSEvalClient
         /// This method shows how to evaluate a trained image classification model, where the 
         /// creation of the CNTK feature vector is happening in native code inside the EvalWrapper.
         /// </summary>
-        public static List<float> EvaluateImageInputUsingImageApi()
+        public static IList<float> EvaluateImageInputUsingImageApi()
         {
-            List<float> outputs = null;
+            IList<float> outputs = null;
 
             try
             {
@@ -527,7 +527,7 @@ namespace Microsoft.MSR.CNTK.Extensibility.Managed.CSEvalClient
         /// Dumps the output to the console
         /// </summary>
         /// <param name="outputs">The structure containing the output layers</param>
-        private static void OutputResults(Dictionary<string, List<float>> outputs)
+        private static void OutputResults(IDictionary<string, IList<float>> outputs)
         {
             Console.WriteLine("--- Output results ---");
             foreach (var item in outputs)
@@ -541,7 +541,7 @@ namespace Microsoft.MSR.CNTK.Extensibility.Managed.CSEvalClient
         /// </summary>
         /// <param name="layer">The display name for the layer</param>
         /// <param name="values">The layer values</param>
-        private static void OutputResults(string layer, List<float> values)
+        private static void OutputResults(string layer, IList<float> values)
         {
             if (values == null)
             {
@@ -563,9 +563,9 @@ namespace Microsoft.MSR.CNTK.Extensibility.Managed.CSEvalClient
         /// <param name="size">The number of element entries associated to the key</param>
         /// <param name="maxValue">The maximum value for random generation values</param>
         /// <returns>A dictionary with a single entry for the key/values</returns>
-        static Dictionary<string, List<float>> GetDictionary(string key, int size, int maxValue)
+        static IDictionary<string, IList<float>> GetDictionary(string key, int size, int maxValue)
         {
-            var dict = new Dictionary<string, List<float>>();
+            var dict = new Dictionary<string, IList<float>>();
             if (key != string.Empty && size >= 0 && maxValue > 0)
             {
                 dict.Add(key, GetFloatArray(size, maxValue));
@@ -580,7 +580,7 @@ namespace Microsoft.MSR.CNTK.Extensibility.Managed.CSEvalClient
         /// <param name="size">The size of the list</param>
         /// <param name="maxValue">The maximum value for the generated values</param>
         /// <returns>A list of random numbers</returns>
-        static List<float> GetFloatArray(int size, int maxValue)
+        static IList<float> GetFloatArray(int size, int maxValue)
         {
             List<float> list = new List<float>();
             if (size > 0 && maxValue >= 0)

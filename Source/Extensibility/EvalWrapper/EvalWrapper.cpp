@@ -24,7 +24,6 @@
 using namespace std;
 using namespace System;
 using namespace System::Collections::Generic;
-using namespace System::Collections;
 using namespace System::Drawing;
 using namespace System::Drawing::Imaging;
 using namespace Microsoft::MSR::CNTK;
@@ -104,7 +103,7 @@ public:
     /// <summary>Creates a network based on the network description in the configuration</summary>
     /// <param name="networkDescription">The configuration file containing the network description</param>
     /// <param name="outputNodeNames">The output list of nodes (replaces the model's list of output nodes)</param>
-    void CreateNetwork(String^ networkDescription, List<String^>^ outputNodeNames)
+    void CreateNetwork(String^ networkDescription, IList<String^>^ outputNodeNames)
     {
         if (m_eval == nullptr)
         {
@@ -133,7 +132,7 @@ public:
     /// <param name="networkDescription">The configuration file containing the network description</param>
     /// <param name="deviceId">The device ID to specify for the network</param>
     /// <param name="outputNodeNames">The output list of nodes (replaces the model's list of output nodes)</param>
-    void CreateNetwork(String^ networkDescription, int deviceId, List<String^>^ outputNodeNames)
+    void CreateNetwork(String^ networkDescription, int deviceId, IList<String^>^ outputNodeNames)
     {
         if (m_eval == nullptr)
         {
@@ -149,7 +148,7 @@ public:
     /// <param name="outputKey">The output layer name</param>
     /// <param name="outputSize">The dimension size of the output layer</param>
     /// <returns>Results for specified layer</returns>
-    __declspec(deprecated) List<ElemType>^ Evaluate(String^ outputKey, int outputSize)
+    __declspec(deprecated) IList<ElemType>^ Evaluate(String^ outputKey, int outputSize)
     {
         if (m_eval == nullptr)
         {
@@ -164,7 +163,7 @@ public:
                 outputs->Add(*(gcnew ElemType));
             }
 
-            Dictionary<String^, List<ElemType>^>^ outputMap = gcnew Dictionary<String^, List<ElemType>^>();
+            Dictionary<String^, IList<ElemType>^>^ outputMap = gcnew Dictionary<String^, IList<ElemType>^>();
             outputMap->Add(outputKey, outputs);
 
             Evaluate(outputMap);
@@ -179,7 +178,7 @@ public:
     /// <summary>Evaluates the model using a single forward feed pass and retrieves the output layer data</summary>
     /// <param name="outputKey">The output layer name</param>
     /// <returns>Results for specified layer</returns>
-    List<ElemType>^ Evaluate(String^ outputKey)
+    IList<ElemType>^ Evaluate(String^ outputKey)
     {
         if (m_eval == nullptr)
         {
@@ -196,7 +195,7 @@ public:
                 outputs->Add(*(gcnew ElemType));
             }
 
-            Dictionary<String^, List<ElemType>^>^ outputMap = gcnew Dictionary<String^, List<ElemType>^>();
+            Dictionary<String^, IList<ElemType>^>^ outputMap = gcnew Dictionary<String^, IList<ElemType>^>();
             outputMap->Add(outputKey, outputs);
 
             Evaluate(outputMap);
@@ -211,7 +210,7 @@ public:
     /// <summary>Evaluates the model against input data and retrieves the output layer data</summary>
     /// <param name="inputs">The input nodes and their values</param>
     /// <param name="outputs">The output nodes and their values</param>
-    void Evaluate(Dictionary<String^, List<ElemType>^>^ inputs, Dictionary<String^, List<ElemType>^>^ outputs)
+    void Evaluate(IDictionary<String^, IList<ElemType>^>^ inputs, IDictionary<String^, IList<ElemType>^>^ outputs)
     {
         if (m_eval == nullptr)
         {
@@ -264,7 +263,7 @@ public:
     /// <param name="outputKey">The output layer name</param>
     /// <param name="outputSize">The dimension size of the output layer</param>
     /// <returns>Results for specified layer</returns>
-    __declspec(deprecated) List<ElemType>^ Evaluate(Dictionary<String^, List<ElemType>^>^ inputs, String^ outputKey, int outputSize)
+    __declspec(deprecated) IList<ElemType>^ Evaluate(IDictionary<String^, IList<ElemType>^>^ inputs, String^ outputKey, int outputSize)
     {
         List<ElemType>^ outputs = gcnew List<ElemType>(outputSize);
         for (int i = 0; i < outputSize; i++)
@@ -272,7 +271,7 @@ public:
             outputs->Add(*(gcnew ElemType));
         }
 
-        Dictionary<String^, List<ElemType>^>^ outputMap = gcnew Dictionary<String^, List<ElemType>^>();
+        Dictionary<String^, IList<ElemType>^>^ outputMap = gcnew Dictionary<String^, IList<ElemType>^>();
         outputMap->Add(outputKey, outputs);
 
         Evaluate(inputs, outputMap);
@@ -285,7 +284,7 @@ public:
     /// <param name="image">The image to work with.</param>
     /// <param name="outputKey">The name of the output node to retrieve.</param>
     /// <returns>Results for specified layer</returns>
-    List<ElemType>^ EvaluateRgbImage(Bitmap^ image, String^ outputKey)
+    IList<ElemType>^ EvaluateRgbImage(Bitmap^ image, String^ outputKey)
     {
         if (m_eval == nullptr)
         {
@@ -330,9 +329,9 @@ public:
         // Read out the single element in the dictionary. The key is the input node name,
         // value is the dimensionality.
         auto enumerator = inDims->GetEnumerator();
-        enumerator.MoveNext();
-        String^ inputNodeName = enumerator.Current.Key;
-        int inputSize = enumerator.Current.Value;
+        enumerator->MoveNext();
+        String^ inputNodeName = enumerator->Current.Key;
+        int inputSize = enumerator->Current.Value;
         // #pixels * #channels in the image must match the input dimension of the network.
         if (inputSize != numPixels)
         {
@@ -412,7 +411,7 @@ public:
     /// <param name="inputs">The input nodes and their values</param>
     /// <param name="outputKey">The output layer name</param>
     /// <returns>Results for requested layer</returns>
-    List<ElemType>^ Evaluate(Dictionary<String^, List<ElemType>^>^ inputs, String^ outputKey)
+    IList<ElemType>^ Evaluate(IDictionary<String^, IList<ElemType>^>^ inputs, String^ outputKey)
     {
         auto outDims = GetNodeDimensions(NodeGroup::Output);
         int outputSize = outDims[outputKey];
@@ -423,7 +422,7 @@ public:
             outputs->Add(*(gcnew ElemType));
         }
 
-        Dictionary<String^, List<ElemType>^>^ outputMap = gcnew Dictionary<String^, List<ElemType>^>();
+        Dictionary<String^, IList<ElemType>^>^ outputMap = gcnew Dictionary<String^, IList<ElemType>^>();
         outputMap->Add(outputKey, outputs);
 
         Evaluate(inputs, outputMap);
@@ -433,7 +432,7 @@ public:
     /// <summary>Returns the layer(s) and associated dimensions for the specified node group
     /// <param name="nodeGroup">The node type to query for</param>
     /// <returns>A dictionary mapping layer names to their dimension</returns>
-    Dictionary<String^, int>^ GetNodeDimensions(NodeGroup nodeGroup)
+    IDictionary<String^, int>^ GetNodeDimensions(NodeGroup nodeGroup)
     {
         if (m_eval == nullptr)
         {
@@ -491,7 +490,7 @@ private:
     /// <summary>Copies a list of element types from a CLI structure to a native structure</summary>
     /// <param name="list">The CLI list of items</param>
     /// <returns>A native vector of items</returns>
-    shared_ptr<std::vector<ElemType>> CopyList(List<ElemType>^ list)
+    shared_ptr<std::vector<ElemType>> CopyList(IList<ElemType>^ list)
     {
         shared_ptr<std::vector<ElemType>> lower(new std::vector<ElemType>());
         if (list != nullptr)
@@ -507,7 +506,7 @@ private:
     /// <summary>Evaluates the model using a single forward feed pass without input and retrieves the output layer data</summary>
     /// <param name="outputs">The output nodes and output buffers</param>
     /// <returns>none</returns>
-    void Evaluate(Dictionary<String^, List<ElemType>^>^ outputs)
+    void Evaluate(IDictionary<String^, IList<ElemType>^>^ outputs)
     {
         std::vector<shared_ptr<std::vector<ElemType>>> sharedOutputVectors;
         std::map<std::wstring, std::vector<ElemType>*> stdOutputs;
@@ -536,7 +535,7 @@ private:
     /// <param name="outputs">The output nodes and output buffers</param>
     /// <param name="outputData">The output data</param>
     /// <returns>none</returns>
-    void CopyOutput(Dictionary<String^, List<ElemType>^>^ outputs, std::map<std::wstring, std::vector<ElemType>*>& outputData)
+    void CopyOutput(IDictionary<String^, IList<ElemType>^>^ outputs, std::map<std::wstring, std::vector<ElemType>*>& outputData)
     {
         for each (auto item in outputs)
         {
@@ -632,8 +631,8 @@ public:
 // explanation to this behavior
 void emit()
 {
-    Dictionary<String^, List<float>^>^ nullDictF = nullptr;
-    Dictionary<String^, List<double>^>^ nullDictD = nullptr;
+    IDictionary<String^, IList<float>^>^ nullDictF = nullptr;
+    IDictionary<String^, IList<double>^>^ nullDictD = nullptr;
 
     IEvaluateModelManagedF f;
     f.Init("");

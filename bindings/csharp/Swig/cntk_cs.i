@@ -304,7 +304,7 @@
         get { return GetCPUDevice(); }
     }
 
-    //public static System.Collections.Generic.List<DeviceDescriptor> AllDevices()
+    //public static System.Collections.Generic.IList<DeviceDescriptor> AllDevices()
     //{
     //    lock (deviceVectorInitLock)
     //    {
@@ -533,7 +533,7 @@
         }
     }
 
-    public System.Collections.Generic.List<Variable> Outputs
+    public System.Collections.Generic.IList<Variable> Outputs
     {
         get 
         {
@@ -576,7 +576,7 @@
         get { return _IsBlock(); }
     }
 
-    public System.Collections.Generic.List<Variable> Arguments
+    public System.Collections.Generic.IList<Variable> Arguments
     {
         get
         {
@@ -605,7 +605,7 @@
         return CNTKLib.Combine(varVect);
     }
 
-    public void Evaluate(System.Collections.Generic.Dictionary<Variable, Value> arguments, System.Collections.Generic.Dictionary<Variable, Value> outputs, DeviceDescriptor computeDevice)
+    public void Evaluate(System.Collections.Generic.IDictionary<Variable, Value> arguments, System.Collections.Generic.IDictionary<Variable, Value> outputs, DeviceDescriptor computeDevice)
     {
         // Evaluate the rootFunction.
         var argMap = new UnorderedMapVariableValuePtr();
@@ -664,7 +664,7 @@
         get { return GetDataType(); }
     }
 
-    public System.Collections.Generic.List<Axis> DynamicAxes
+    public System.Collections.Generic.IList<Axis> DynamicAxes
     {
         get {
             var axes = new System.Collections.Generic.List<Axis>();
@@ -785,7 +785,7 @@
         get { return GetRank(); }
     }
 
-    public System.Collections.Generic.List<uint> Dimensions
+    public System.Collections.Generic.IList<uint> Dimensions
     {
         get 
         { 
@@ -952,7 +952,7 @@
         if (batch.Count % shapeSize != 0)
             throw new System.ArgumentException("The number of elements in the batch must be a multiple of the size of the shape");
         var count = batch.Count / shapeSize;
-        var input = new System.Collections.Generic.List<System.Collections.Generic.List<T>>((int)count);
+        var input = new System.Collections.Generic.List<System.Collections.Generic.IList<T>>((int)count);
         for (int i = 0; i < count; i++)
         {
             var seq = new System.Collections.Generic.List<T>();
@@ -964,7 +964,7 @@
     }
 
      public static Value CreateSequence<T>(NDShape shape,
-                                          System.Collections.Generic.List<T> sequence,
+                                          System.Collections.Generic.IList<T> sequence,
                                           DeviceDescriptor device,
                                           bool readOnly = false)
     {
@@ -972,17 +972,17 @@
     }
 
     public static Value CreateSequence<T>(NDShape shape,
-                                          System.Collections.Generic.List<T> sequence,
+                                          System.Collections.Generic.IList<T> sequence,
                                           bool seqStartFlag,
                                           DeviceDescriptor device,
                                           bool readOnly = false)
     {
-        var input = new System.Collections.Generic.List<System.Collections.Generic.List<T>>(1) {sequence};
+        var input = new System.Collections.Generic.List<System.Collections.Generic.IList<T>>(1) {sequence};
         return Create(shape, input, new System.Collections.Generic.List<bool>(1) {seqStartFlag}, device, readOnly);
     }
 
     public static Value CreateBatchOfSequences<T>(NDShape shape,
-                                                  System.Collections.Generic.List<System.Collections.Generic.List<T>> batchOfSequences,
+                                                  System.Collections.Generic.IList<System.Collections.Generic.IList<T>> batchOfSequences,
                                                   DeviceDescriptor device,
                                                   bool readOnly = false)
     {
@@ -990,8 +990,8 @@
     }
 
     public static Value CreateBatchOfSequences<T>(NDShape shape,
-                                                  System.Collections.Generic.List<System.Collections.Generic.List<T>> batchOfSequences,
-                                                  System.Collections.Generic.List<bool> seqStartFlags,
+                                                  System.Collections.Generic.IList<System.Collections.Generic.IList<T>> batchOfSequences,
+                                                  System.Collections.Generic.IList<bool> seqStartFlags,
                                                   DeviceDescriptor device,
                                                   bool readOnly = false)
     {
@@ -999,8 +999,8 @@
     }
 
     private static Value Create<T>(NDShape sampleShape,
-                                  System.Collections.Generic.List<System.Collections.Generic.List<T>> sequences,
-                                  System.Collections.Generic.List<bool> sequenceStartFlags,
+                                  System.Collections.Generic.IList<System.Collections.Generic.IList<T>> sequences,
+                                  System.Collections.Generic.IList<bool> sequenceStartFlags,
                                   DeviceDescriptor device,
                                   bool readOnly = false)
     {
@@ -1036,17 +1036,18 @@
     }
 
     // Create Value object from OneHotVector input: batch, sequence or batch of sequences
-    public static Value CreateBatch<T>(uint dimension, System.Collections.Generic.List<uint> batch, DeviceDescriptor device, bool readOnly = false)
+    public static Value CreateBatch<T>(uint dimension, System.Collections.Generic.IList<uint> batch, DeviceDescriptor device, bool readOnly = false)
     {
         // Is CreateBatch for OneHot really useful? 
-        var input = new System.Collections.Generic.List<System.Collections.Generic.List<uint>>();
-        batch.ForEach(element => input.Add(new System.Collections.Generic.List<uint>(1) {element}));
+        var input = new System.Collections.Generic.List<System.Collections.Generic.IList<uint>>();
+		foreach(var element in batch)
+			input.Add(new System.Collections.Generic.List<uint>(1) {element});
         
         return Create<T>(dimension, input, new System.Collections.Generic.List<bool>(0), device, readOnly);
     }
 
     public static Value CreateSequence<T>(uint dimension,
-                                          System.Collections.Generic.List<uint> sequence,
+                                          System.Collections.Generic.IList<uint> sequence,
                                           DeviceDescriptor device,
                                           bool readOnly = false)
     {
@@ -1054,17 +1055,17 @@
     }
 
     public static Value CreateSequence<T>(uint dimension,
-                                          System.Collections.Generic.List<uint> sequence,
+                                          System.Collections.Generic.IList<uint> sequence,
                                           bool seqStartFlag,
                                           DeviceDescriptor device,
                                           bool readOnly = false)
     {
-        var input = new System.Collections.Generic.List<System.Collections.Generic.List<uint>>(1) {sequence};
+        var input = new System.Collections.Generic.List<System.Collections.Generic.IList<uint>>(1) {sequence};
         return Create<T>(dimension, input, new System.Collections.Generic.List<bool>(1) {seqStartFlag}, device, readOnly);
     }
 
     public static Value CreateBatchOfSequences<T>(uint dimension,
-                                                  System.Collections.Generic.List<System.Collections.Generic.List<uint>> batchOfSequences,
+                                                  System.Collections.Generic.IList<System.Collections.Generic.IList<uint>> batchOfSequences,
                                                   DeviceDescriptor device,
                                                   bool readOnly = false)
     {
@@ -1072,8 +1073,8 @@
     }
 
     public static Value CreateBatchOfSequences<T>(uint dimension, 
-                                                  System.Collections.Generic.List<System.Collections.Generic.List<uint>> batchOfSequences,
-                                                  System.Collections.Generic.List<bool> seqStartFlags,
+                                                  System.Collections.Generic.IList<System.Collections.Generic.IList<uint>> batchOfSequences,
+                                                  System.Collections.Generic.IList<bool> seqStartFlags,
                                                   DeviceDescriptor device,
                                                   bool readOnly = false)
     {
@@ -1081,8 +1082,8 @@
     }
 
     private static Value Create<T>(uint dimension,
-                                  System.Collections.Generic.List<System.Collections.Generic.List<uint>> sequences,
-                                  System.Collections.Generic.List<bool> sequenceStartFlags,
+                                  System.Collections.Generic.IList<System.Collections.Generic.IList<uint>> sequences,
+                                  System.Collections.Generic.IList<bool> sequenceStartFlags,
                                   DeviceDescriptor device,
                                   bool readOnly = false)
     {
@@ -1111,7 +1112,7 @@
 
     // Create value object from NDArrayView
     public static Value Create(NDShape sampleShape,
-                               System.Collections.Generic.List<NDArrayView> sequences,
+                               System.Collections.Generic.IList<NDArrayView> sequences,
                                DeviceDescriptor device,
                                bool readOnly = false)
     {
@@ -1119,8 +1120,8 @@
     }
 
     public static Value Create(NDShape sampleShape,
-                               System.Collections.Generic.List<NDArrayView> sequences,
-                               System.Collections.Generic.List<bool> sequenceStartFlags,
+                               System.Collections.Generic.IList<NDArrayView> sequences,
+                               System.Collections.Generic.IList<bool> sequenceStartFlags,
                                DeviceDescriptor device,
                                bool readOnly = false)
     {
@@ -1134,12 +1135,12 @@
     // The 'sequences' is a list of sequences with variable length. 
     // The number of items contained in the outer list of 'sequences' is the number of sequences in the Value object.
     // Each element of the outer list represents a sequence.
-    // Each sequence, represented by List<T>, contains a variable number of samples. 
+    // Each sequence, represented by IList<T>, contains a variable number of samples. 
     // Each sample consits of a fixed number of elements with type of 'T'. The number of elements is determined by the variable shape.
-    // The number of samples = the count of elements in List<T> / the count of elements of the sample
+    // The number of samples = the count of elements in IList<T> / the count of elements of the sample
     // The shape of the variable should match the shape of the Value object.
     //
-    public void CopyVariableValueTo<T>(Variable sampleVariable, System.Collections.Generic.List<System.Collections.Generic.List<T>> sequences)
+    public void CopyVariableValueTo<T>(Variable sampleVariable, System.Collections.Generic.IList<System.Collections.Generic.IList<T>> sequences)
     {
         if (typeof(T).Equals(typeof(float)))
         {
@@ -1188,11 +1189,11 @@
     // The 'sequences' is a list of sequences with variable length.
     // The number of items contained in the outer list of 'sequences' is the number of sequences in the Value object.
     // Each element of the outer list represents a sequence.
-    // Each sequence, represented by List<uint>, contains a variable number of samples. 
+    // Each sequence, represented by IList<uint>, contains a variable number of samples. 
     // Each sample is represented by an index of the OneHot vector. The size of the OneHot vector should match that defined in the variable. 
-    // The number of samples = the count of elements in List<uint>.
+    // The number of samples = the count of elements in IList<uint>.
     //
-    public void CopyVariableValueTo(Variable sampleVariable, System.Collections.Generic.List<System.Collections.Generic.List<uint>> sequences)
+    public void CopyVariableValueTo(Variable sampleVariable, System.Collections.Generic.IList<System.Collections.Generic.IList<uint>> sequences)
     {
         if (sampleVariable.Shape[0] != sampleVariable.Shape.TotalSize)
         {

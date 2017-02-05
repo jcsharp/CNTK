@@ -60,7 +60,7 @@ namespace CNTKLibraryCSEvalExamples
         /// </summary>
         /// <param name="image">The bitmap image to extract features from</param>
         /// <returns>A list of pixels in HWC order</returns>
-        public static List<float> ExtractCHW(this Bitmap image)
+        public static IList<float> ExtractCHW(this Bitmap image)
         {
             var features = new List<float>(image.Width * image.Height * 3);
             for (int c = 0; c < 3; c++)
@@ -129,7 +129,7 @@ namespace CNTKLibraryCSEvalExamples
         /// </summary>
         /// <param name="image">The bitmap image to extract features from</param>
         /// <returns>A list of pixels in HWC order</returns>
-        public static List<float> ExtractHWC(this Bitmap image)
+        public static IList<float> ExtractHWC(this Bitmap image)
         {
             var features = new List<float>(image.Width * image.Height * 3);
             for (int w = 0; w < image.Width; w++)
@@ -154,7 +154,7 @@ namespace CNTKLibraryCSEvalExamples
         /// </summary>
         /// <param name="image">The bitmap image to extract features from</param>
         /// <returns>A list of pixels in HWC order</returns>
-        public static List<float> ParallelExtractHWC(this Bitmap image)
+        public static IList<float> ParallelExtractHWC(this Bitmap image)
         {
             int heightStride = image.Width * 3;
             int widthStride = image.Height * 3;

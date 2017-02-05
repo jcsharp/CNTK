@@ -48,7 +48,7 @@ namespace Microsoft.MSR.CNTK.Extensibility.Managed.Tests
                 var outputVal = model.Evaluate(outDims.First().Key);
 
                 var expected = new List<float>() {3};
-                CollectionAssert.AreEqual(expected, outputVal);
+                CollectionAssert.AreEqual(expected, outputVal.ToList());
             }
         }
 
@@ -73,7 +73,7 @@ namespace Microsoft.MSR.CNTK.Extensibility.Managed.Tests
                 Assert.AreEqual(inDims.First().Key, "i1");
                 Assert.AreEqual(inDims.First().Value, 1);
 
-                var inputs = new Dictionary<string, List<float>>()
+                var inputs = new Dictionary<string, IList<float>>()
                     {
                         {inDims.First().Key, new List<float>() {2}}
                     };
@@ -83,7 +83,7 @@ namespace Microsoft.MSR.CNTK.Extensibility.Managed.Tests
                 Assert.AreEqual(outDims.First().Key, "o1");
                 Assert.AreEqual(outDims.First().Value, 1);
 
-                var outputs = new Dictionary<string, List<float>>()
+                var outputs = new Dictionary<string, IList<float>>()
                     {
                         {outDims.First().Key, new List<float>() {0}}
                     };
@@ -91,7 +91,7 @@ namespace Microsoft.MSR.CNTK.Extensibility.Managed.Tests
                 model.Evaluate(inputs, outputs);
 
                 var expected = new List<float>() {6};
-                CollectionAssert.AreEqual(expected, outputs.First().Value);
+                CollectionAssert.AreEqual(expected, outputs.First().Value.ToList());
             }
         }
 
@@ -118,7 +118,7 @@ namespace Microsoft.MSR.CNTK.Extensibility.Managed.Tests
                 Assert.AreEqual(inDims.First().Key, "i1");
                 Assert.AreEqual(inDims.First().Value, 1);
 
-                var inputs = new Dictionary<string, List<float>>()
+                var inputs = new Dictionary<string, IList<float>>()
                     {
                         {"i1", new List<float>() {2}}
                     };
@@ -128,7 +128,7 @@ namespace Microsoft.MSR.CNTK.Extensibility.Managed.Tests
                 Assert.AreEqual(outDims["o1"], 1);
                 Assert.AreEqual(outDims["o2"], 1);
 
-                var outputs = new Dictionary<string, List<float>>()
+                var outputs = new Dictionary<string, IList<float>>()
                     {
                         {"o1", new List<float>() {0}},
                         {"o2", new List<float>() {0}}
@@ -138,8 +138,8 @@ namespace Microsoft.MSR.CNTK.Extensibility.Managed.Tests
 
                 var expected1 = new List<float>() {6};
                 var expected2 = new List<float>() {10};
-                CollectionAssert.AreEqual(expected1, outputs["o1"]);
-                CollectionAssert.AreEqual(expected2, outputs["o2"]);
+                CollectionAssert.AreEqual(expected1, outputs["o1"].ToList());
+                CollectionAssert.AreEqual(expected2, outputs["o2"].ToList());
             }
         }
 
@@ -167,7 +167,7 @@ namespace Microsoft.MSR.CNTK.Extensibility.Managed.Tests
                 Assert.AreEqual(inDims.Count(), 1);
                 Assert.AreEqual(inDims["i1"], 1);
 
-                var inputs = new Dictionary<string, List<float>>()
+                var inputs = new Dictionary<string, IList<float>>()
                     {
                         { "i1", new List<float>() {5} }
                     };
@@ -178,7 +178,7 @@ namespace Microsoft.MSR.CNTK.Extensibility.Managed.Tests
                 Assert.AreEqual(outDims["pool5"], 1);
                 Assert.AreEqual(outDims["OutputNodes.z"], 1);
 
-                var outputs = new Dictionary<string, List<float>>()
+                var outputs = new Dictionary<string, IList<float>>()
                     {
                         // The order of node name below is different than that returned by outDims,
                         // in order to test whether the output values are correctly mapped to the name.
@@ -191,8 +191,8 @@ namespace Microsoft.MSR.CNTK.Extensibility.Managed.Tests
 
                 var expected1 = new List<float>() {10};
                 var expected2 = new List<float>() {17};
-                CollectionAssert.AreEqual(expected1, outputs["pool5"]);
-                CollectionAssert.AreEqual(expected2, outputs["OutputNodes.z"]);
+                CollectionAssert.AreEqual(expected1, outputs["pool5"].ToList());
+                CollectionAssert.AreEqual(expected2, outputs["OutputNodes.z"].ToList());
             }
         }
 

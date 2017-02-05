@@ -40,7 +40,7 @@ namespace CNTKLibraryCSEvalExamples
             Variable inputVar = modelFunc.Arguments.Single();
             var outputDataMap = new Dictionary<Variable, Value>();
             Value inputVal, outputVal;
-            List<List<float>> outputBuffer;
+            List<IList<float>> outputBuffer;
 
             // Get shape data for the input variable
             NDShape inputShape = inputVar.Shape;
@@ -68,7 +68,7 @@ namespace CNTKLibraryCSEvalExamples
             modelFunc.Evaluate(inputDataMap, outputDataMap, device);
 
             // Get evaluate result as dense output
-            outputBuffer = new List<List<float>>();
+            outputBuffer = new List<IList<float>>();
             outputVal = outputDataMap[outputVar];
             outputVal.CopyVariableValueTo(outputVar, outputBuffer);
 
@@ -99,7 +99,7 @@ namespace CNTKLibraryCSEvalExamples
             Variable inputVar = modelFunc.Arguments.Single();
             var outputDataMap = new Dictionary<Variable, Value>();
             Value inputVal, outputVal;
-            List<List<float>> outputBuffer;
+            List<IList<float>> outputBuffer;
 
             // Get shape data for the input variable
             NDShape inputShape = inputVar.Shape;
@@ -138,7 +138,7 @@ namespace CNTKLibraryCSEvalExamples
             modelFunc.Evaluate(inputDataMap, outputDataMap, device);
 
             // Retrieve the evaluation result.
-            outputBuffer = new List<List<float>>();
+            outputBuffer = new List<IList<float>>();
             outputVal = outputDataMap[outputVar];
             outputVal.CopyVariableValueTo(outputVar, outputBuffer);
 
@@ -205,7 +205,7 @@ namespace CNTKLibraryCSEvalExamples
             myFunc.Evaluate(inputDataMap, outputDataMap, device);
 
             // Get output result
-            var outputData = new List<List<uint>>();
+            var outputData = new List<IList<uint>>();
             Value outputVal = outputDataMap[outputVar];
             outputVal.CopyVariableValueTo(outputVar, outputData);
 
@@ -253,7 +253,7 @@ namespace CNTKLibraryCSEvalExamples
             // Prepare the input data. 
             // Each sample is represented by an index to the onehot vector, so the index of the non-zero value of each sample is saved in the inner list.
             // The outer list represents sequences contained in the batch.
-            var inputBatch = new List<List<uint>>();
+            var inputBatch = new List<IList<uint>>();
             // SeqStartFlagBatch is used to indicate whether this sequence is a new sequence (true) or concatenating the previous sequence (false).
             var seqStartFlagBatch = new List<bool>();
 
@@ -299,7 +299,7 @@ namespace CNTKLibraryCSEvalExamples
             myFunc.Evaluate(inputDataMap, outputDataMap, device);
 
             // Get evaluation result.
-            var outputData = new List<List<uint>>();
+            var outputData = new List<IList<uint>>();
             var outputVal = outputDataMap[outputVar];
             outputVal.CopyVariableValueTo(outputVar, outputData);
 
@@ -320,7 +320,7 @@ namespace CNTKLibraryCSEvalExamples
             }
         }
 
-        private static void PrintOutput<T>(uint sampleSize, List<List<T>> outputBuffer)
+        private static void PrintOutput<T>(uint sampleSize, IList<IList<T>> outputBuffer)
         {
             Console.WriteLine("The number of sequences in the batch: " + outputBuffer.Count);
             int seqNo = 0;
@@ -350,7 +350,7 @@ namespace CNTKLibraryCSEvalExamples
             }
         }
 
-        private static Dictionary<string, uint> buildVocabIndex(string filePath)
+        private static IDictionary<string, uint> buildVocabIndex(string filePath)
         {
             var vocab = new Dictionary<string,uint>();
 

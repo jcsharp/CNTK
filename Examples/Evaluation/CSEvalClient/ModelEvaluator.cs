@@ -51,7 +51,7 @@ namespace Microsoft.MSR.CNTK.Extensibility.Managed.CSEvalClient
         /// <summary>
         /// The input buffer
         /// </summary>
-        private Dictionary<string, List<float>> m_inputs;
+        private IDictionary<string, IList<float>> m_inputs;
 
         /// <summary>
         /// Indicates if the object is diposed
@@ -127,7 +127,7 @@ namespace Microsoft.MSR.CNTK.Extensibility.Managed.CSEvalClient
         /// </summary>
         /// <param name="inputs">The input vector</param>
         /// <returns>The output vector</returns>
-        public static List<float> Evaluate(List<float> inputs)
+        public static IList<float> Evaluate(IList<float> inputs)
         {
             var model = Models.Take();
             try
@@ -163,7 +163,7 @@ namespace Microsoft.MSR.CNTK.Extensibility.Managed.CSEvalClient
             // Generate random input values in the appropriate structure and size
             var inDims = m_model.GetNodeDimensions(NodeGroup.Input);
             m_inKey = inDims.First().Key;
-            m_inputs = new Dictionary<string, List<float>>() { { m_inKey, null } };
+            m_inputs = new Dictionary<string, IList<float>>() { { m_inKey, null } };
 
             // We request the output layer names(s) and dimension, we'll use the first one.
             var outDims = m_model.GetNodeDimensions(NodeGroup.Output);
@@ -199,9 +199,9 @@ namespace Microsoft.MSR.CNTK.Extensibility.Managed.CSEvalClient
         /// </summary>
         /// <param name="inputs">Input vector</param>
         /// <returns>The output vector</returns>
-        private List<float> EvaluateInput(List<float> inputs)
+        private IList<float> EvaluateInput(IList<float> inputs)
         {
-            return m_model.Evaluate(new Dictionary<string, List<float>>() { { m_inKey, inputs } }, m_outKey);
+            return m_model.Evaluate(new Dictionary<string, IList<float>>() { { m_inKey, inputs } }, m_outKey);
         }
 
         /// <summary>

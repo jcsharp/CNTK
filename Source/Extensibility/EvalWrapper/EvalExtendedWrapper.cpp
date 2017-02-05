@@ -30,7 +30,6 @@
 using namespace std;
 using namespace System;
 using namespace System::Collections::Generic;
-using namespace System::Collections;
 
 namespace Microsoft { namespace MSR { namespace CNTK { namespace Extensibility { namespace Managed {
 
@@ -240,7 +239,7 @@ public:
     // Allocate internal state for calling ForwardPass(). The call restricts the network (inputs and outputs)
     // to the functions represented by the output name.
     //
-    void StartForwardEvaluation(List<String^>^ outputs)
+    void StartForwardEvaluation(IList<String^>^ outputs)
     {
         if (m_eval == nullptr)
         {
