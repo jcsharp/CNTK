@@ -947,16 +947,16 @@
     // Create Value object from dense input: batch, sequence or batch of sequences.
     public static Value CreateBatch<T>(NDShape shape, System.Collections.Generic.List<T> batch, DeviceDescriptor device, bool readOnly = false)
     {
-        var shapeSize = shape.TotalSize;
+        int shapeSize = (int)shape.TotalSize;
 
         if (batch.Count % shapeSize != 0)
             throw new System.ArgumentException("The number of elements in the batch must be a multiple of the size of the shape");
-        var count = batch.Count / shapeSize;
-        var input = new System.Collections.Generic.List<System.Collections.Generic.IList<T>>((int)count);
+        int count = batch.Count / shapeSize;
+        var input = new System.Collections.Generic.List<System.Collections.Generic.IList<T>>(count);
         for (int i = 0; i < count; i++)
         {
-            var seq = new System.Collections.Generic.List<T>();
-            seq.AddRange(batch.GetRange((int)(i * shapeSize), (int)shapeSize));
+            var seq = new System.Collections.Generic.List<T>(shapeSize);
+            seq.AddRange(batch.GetRange(i * shapeSize, shapeSize));
             input.Add(seq);
         }
         // Pass the empty seqStartFlags means all sequences have the start flag with true.
