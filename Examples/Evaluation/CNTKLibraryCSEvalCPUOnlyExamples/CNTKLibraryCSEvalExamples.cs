@@ -320,7 +320,7 @@ namespace CNTKLibraryCSEvalExamples
             }
         }
 
-        private static void PrintOutput<T>(uint sampleSize, List<IList<T>> outputBuffer)
+        private static void PrintOutput<T>(uint sampleSize, IList<IList<T>> outputBuffer)
         {
             Console.WriteLine("The number of sequences in the batch: " + outputBuffer.Count);
             int seqNo = 0;
