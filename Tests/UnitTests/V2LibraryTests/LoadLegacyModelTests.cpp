@@ -2,29 +2,31 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
 //
-// EvalMultithreads.cpp : Sample application shows how to evaluate a model in multiple threading environment. 
-//
+
+#include "stdafx.h"
 #include <functional>
-#include <thread>
 #include <iostream>
 #include "CNTKLibrary.h"
 #include "Common.h"
 
 using namespace CNTK;
 
+namespace CNTK { namespace Test {
+
 void TestLoadLegacyModelWithPrecompute(const DeviceDescriptor& device)
 {
     const size_t baseFeaturesDim = 363;
     const size_t numOutputClasses = 132;
 
-    auto modelFuncPtr = CNTK::Function::LoadModel(L"cntkSpeechFF.dnn", device);
+    auto modelFuncPtr = Function::Load(L"cntkSpeechFF.dnn", device);
 
     auto FindVariableByName = [](const std::vector<Variable>& variables, const std::wstring& name) {
         for (size_t i = 0; i < variables.size(); ++i)
             if (variables[i].Name() == name)
                 return variables[i];
 
-        throw std::runtime_error("No output foudn with teh given name");
+        BOOST_ERROR("No output found with the given name");
+        return Variable();
     };
 
     auto arguments = modelFuncPtr->Arguments();
@@ -36,9 +38,9 @@ void TestLoadLegacyModelWithPrecompute(const DeviceDescriptor& device)
     FunctionPtr loss = FindVariableByName(outputs, L"CrossEntropyWithSoftmax");
     FunctionPtr eval = FindVariableByName(outputs, L"EvalClassificationError");
 
-    Dictionary frameModeConfig;
-    frameModeConfig[L"frameMode"] = true;
-    auto minibatchSource = CreateHTKMinibatchSource(baseFeaturesDim, numOutputClasses, frameModeConfig, MinibatchSource::InfinitelyRepeat, true);
+    auto config = GetHTKMinibatchSourceConfig(baseFeaturesDim, numOutputClasses);
+    config.isFrameModeEnabled = true;
+    auto minibatchSource = CreateCompositeMinibatchSource(config);
 
     const size_t minbatchSize = 256;
     size_t numMinibatches = 10;
@@ -46,8 +48,8 @@ void TestLoadLegacyModelWithPrecompute(const DeviceDescriptor& device)
     auto featureStreamInfo = minibatchSource->StreamInfo(L"features");
     auto labelStreamInfo = minibatchSource->StreamInfo(L"labels");
 
-    LearningRatePerSampleSchedule learningRatePerSample = 0.000781;
-    MomentumAsTimeConstantSchedule momentumTimeConstant = 6074;
+    LearningRateSchedule learningRatePerSample = LearningRateSchedule(0.000781, 1);
+    MomentumSchedule momentumTimeConstant = MomentumAsTimeConstantSchedule(6074);
     auto learner = MomentumSGDLearner(prediction->Parameters(), learningRatePerSample, momentumTimeConstant, /*unitGainMomentum = */true);
     auto trainer = CreateTrainer(prediction, loss, eval, { learner });
 
@@ -62,12 +64,20 @@ void TestLoadLegacyModelWithPrecompute(const DeviceDescriptor& device)
     }
 }
 
-void LoadLegacyModelTests()
+BOOST_AUTO_TEST_SUITE(LoadLegacyModelSuite)
+
+BOOST_AUTO_TEST_CASE(LoadLegacyModelWithPrecomputeInCPU)
 {
-    fprintf(stderr, "\nLoadLegacyModelTests..\n");
+    if (ShouldRunOnCpu())
+        TestLoadLegacyModelWithPrecompute(DeviceDescriptor::CPUDevice());
+}
 
-    TestLoadLegacyModelWithPrecompute(DeviceDescriptor::CPUDevice());
-
-    if (IsGPUAvailable())
+BOOST_AUTO_TEST_CASE(LoadLegacyModelWithPrecomputeInGPU)
+{
+    if (ShouldRunOnGpu())
         TestLoadLegacyModelWithPrecompute(DeviceDescriptor::GPUDevice(0));
 }
+
+BOOST_AUTO_TEST_SUITE_END()
+
+}}
