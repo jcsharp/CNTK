@@ -210,6 +210,41 @@ namespace CNTK
 #endif
         }
 
+        void EnableNodeTiming()
+        {
+            Microsoft::MSR::CNTK::Globals::SetNodeTiming(true);
+        }
+
+        void DisableNodeTimeing()
+        {
+            Microsoft::MSR::CNTK::Globals::SetNodeTiming(false);
+        }
+
+        void EnableCPUEvalOptimization()
+        {
+            // optimization is only for float
+            int flags = Microsoft::MSR::CNTK::CPUMatrix<float>::GetOptimizationFlags();
+            flags |= Microsoft::MSR::CNTK::CPUMatrix<float>::OPT_EVAL_WITH_MKL;
+            Microsoft::MSR::CNTK::CPUMatrix<float>::SetOptimizationFlags(Microsoft::MSR::CNTK::CPUMatrix<float>::OPT_EVAL_WITH_MKL);
+        }
+
+        void DisableCPUEvalOptimization()
+        {
+            int flags = Microsoft::MSR::CNTK::CPUMatrix<float>::GetOptimizationFlags();
+            flags &= ~Microsoft::MSR::CNTK::CPUMatrix<float>::OPT_EVAL_WITH_MKL;
+            Microsoft::MSR::CNTK::CPUMatrix<float>::SetOptimizationFlags(flags);
+        }
+
+        void SetMPIPackThreshold(size_t packThesholdInBytes)
+        {
+            Microsoft::MSR::CNTK::Globals::SetMPIPackThreshold(packThesholdInBytes);
+        }
+
+        size_t GetMPIPackThreshold()
+        {
+            return Microsoft::MSR::CNTK::Globals::GetMPIPackThreshold();
+        }
+
         bool AreEquivalent(const Variable& var1, const Variable& var2, bool allowParameterAndConstantsEquivalence)
         {
             bool areDynamicAxesCompatible = (var1.DynamicAxes().size() == var2.DynamicAxes().size());
@@ -589,11 +624,6 @@ namespace CNTK
         {
             return s_threadsAreSet;
         }
-
-        size_t DefaultPackThresholdSizeInBytes()
-        {
-            return DEFAULT_PACK_THRESHOLD_SIZE_IN_BYTES;
-        }
     }
 
     std::atomic<TraceLevel> s_traceLevel(TraceLevel::Warning);
@@ -955,9 +985,6 @@ namespace CNTK
 #ifdef _BUILDTARGET_
             LOGPRINTF(stderr, "\t\tBuild target: %s\n", _BUILDTARGET_);
 #endif
-#ifdef _WITH_1BITSGD_
-            LOGPRINTF(stderr, "\t\tWith 1bit-SGD: %s\n", _WITH_1BITSGD_);
-#endif
 #ifdef _WITH_ASGD_
             LOGPRINTF(stderr, "\t\tWith ASGD: %s\n", _WITH_ASGD_);
 #endif
@@ -966,7 +993,7 @@ namespace CNTK
 #endif
 #ifdef _CUDA_PATH_
             int cudaVersion = 0;
-            if (cudaDriverGetVersion(&cudaVersion) == cudaSuccess)
+            if (cudaRuntimeGetVersion(&cudaVersion) == cudaSuccess)
             {
                 int major = 0, minor = 0, patchLevel = 0;
                 ExtractCUDAVersion(cudaVersion, major, minor, patchLevel);
